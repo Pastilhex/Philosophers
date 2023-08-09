@@ -1,0 +1,6 @@
+NAME = philo
+CC = CC
+PT = -pthread
+GDB = -g
+SRC = 
+OBJ = (SRC:.c=.o)

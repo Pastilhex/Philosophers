@@ -1,0 +1,18 @@
+NAME = philo
+GDB = -g
+PT = -pthread
+OBJ = (SRC:.c=.o)
+SRC = *.c
+CC = CC
+
+all: $(NAME)
+
+$(NAME): $(OBJ)
+	$(CC) $(OBJ) $(PT) $(GDB) -o $(NAME)
+	
+%.o: %.c
+	$(CC) $(GDB) $(PT) -c $< -o $@
+
+clean:
+	rm f $(NAME)
+	rm f $(OBJ)
