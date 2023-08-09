@@ -1,3 +1,6 @@
 ./history
+./vscode
+.history
+.vscode
 *.o
 philo
