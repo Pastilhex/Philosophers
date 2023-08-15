@@ -36,7 +36,6 @@ typedef struct s_philo
 
 typedef struct s_base
 {
-	t_philo			*philos;
 	int				number_of_philosophers;
 	int				time_to_die;
 	int				time_to_eat;
@@ -46,6 +45,7 @@ typedef struct s_base
 	int				philo_out;
 	int				teste;
 	pthread_mutex_t	mutex;
+	t_philo			*philos;
 	t_counters		*c;
 }	t_base;
 
