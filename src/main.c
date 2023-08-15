@@ -24,7 +24,7 @@ void	*test(void *arg)
 		pthread_mutex_lock(&base->mutex);
 		base->teste++;
 		pthread_mutex_unlock(&base->mutex);
-		printf("%d\n", i);
+		printf("%d\n", base->teste);
 	}
 	return (NULL);
 }
@@ -34,7 +34,7 @@ void	ft_create_philos(t_base *base)
 	int	i;
 
 	i = 0;
-	base->philos = (t_philo *)malloc(base->number_of_philosophers * sizeof(t_philo));
+	base->philos = (t_philo *)ft_calloc(base->number_of_philosophers, sizeof(t_philo));
 	while (i < base->number_of_philosophers)
 	{
 		base->philos[i].die = 0;
@@ -63,27 +63,29 @@ void	ft_input_args(t_base *b, char **argv)
 		b->nbr_of_meals = ft_atoi(argv[local.i]);
 }
 
-void	ft_start_threads(t_base *base, t_philo *philo)
+void	ft_start_threads(t_base *base)
 {
 	int	i;
 
 	i = 0;
 	while (i < base->number_of_philosophers)
 	{
-		pthread_create(&(philo[i].pt_philo), NULL, test, &(philo[i]));
+		base->philos[i].pt_philo = 0;
+		pthread_create(&(base->philos[i].pt_philo), NULL, test, &(base->philos[i]));
 		printf("Started Philo %d\n", i);
 		i++;
 	}
+
 }
 
-void	ft_join_threads(t_base *base, t_philo *philo)
+void	ft_join_threads(t_base *base)
 {
 	int	i;
 
 	i = 0;
 	while (i < base->number_of_philosophers)
 	{
-		pthread_join(philo[i].pt_philo, NULL);
+		pthread_join(base->philos[i].pt_philo, NULL);
 		printf("Finished Philo %d\n", i);
 		i++;
 	}
@@ -98,13 +100,13 @@ int	main(int argc, char **argv)
 		printf("Too many arguments. Exiting...\n");
 		return (1);
 	}
-	base.teste = 0;
 	ft_input_args(&base, argv),
 	ft_create_philos(&base);
+
 	pthread_mutex_init(&base.mutex, NULL);
-	
-	ft_start_threads(&base, base.philos);
-	ft_join_threads(&base, base.philos);
+
+	ft_start_threads(&base);
+	ft_join_threads(&base);
 
 	pthread_mutex_destroy(&base.mutex);
 	printf("Num: %d\n", base.teste);
