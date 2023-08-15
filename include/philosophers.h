@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/09 05:25:52 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/15 12:14:11 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,30 @@ typedef struct s_counters
 
 typedef struct s_philo
 {
-	int	number_of_philosophers;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	number_of_times_each_philosopher_must_eat;
-	t_counters	*c;
+	pthread_t	pt_philo;
+	int			die;
+	int			eat;
+	int			sleep;
+	int			think;
 }	t_philo;
 
-int	ft_atoi(const char *str);
+typedef struct s_base
+{
+	t_philo			*philos;
+	int				number_of_philosophers;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nbr_of_meals; //number_of_times_each_philosopher_must_eat;
+	int				even_odd;
+	int				philo_out;
+	int				teste;
+	pthread_mutex_t	mutex;
+	t_counters		*c;
+}	t_base;
+
+int		ft_atoi(const char *str);
+void	ft_bzero(void *s, size_t n);
+void	*ft_calloc(size_t nmemb, size_t size);
 
 #endif
