@@ -25,19 +25,10 @@ typedef struct s_counters
 	int	k;
 }	t_counters;
 
-typedef struct s_base
+typedef struct s_forks
 {
-	int				teste;
-	int				number_of_philosophers;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
-	int				nbr_of_meals; //number_of_times_each_philosopher_must_eat;
-	int				even_odd;
-	int				philo_out;
-	pthread_mutex_t	mutex;
-	t_counters		*c;
-}	t_base;
+	int	fork;
+}	t_forks;
 
 typedef struct s_philo
 {
@@ -46,8 +37,24 @@ typedef struct s_philo
 	int			eat;
 	int			sleep;
 	int			think;
-	t_base		*base;
+	t_forks		*fork;
+	pthread_mutex_t	mutex;
 }	t_philo;
+
+typedef struct s_base
+{
+	int				number_of_philosophers;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nbr_of_meals; //number_of_times_each_philosopher_must_eat;
+	int				even_odd;
+	int				dead_philo_detected;
+	t_forks			*fork;
+	t_philo			*philo_id;
+	t_counters		*c;
+}	t_base;
+
 
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);
