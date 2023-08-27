@@ -6,7 +6,7 @@
 /*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/27 17:14:08 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/27 21:35:35 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,31 +26,44 @@ void	*routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (philo->die == 0)
+	while (philo->die == false)
 	{
 		pthread_mutex_lock(&philo->link_to_base->base_mutex);
 		if (forks_are_avaiable(philo, philo->id) && (philo->sleep == false))
 		{
 			philo->fork->status[philo->id] = 1;
 			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
+			
 			philo->fork->status[philo->id + 1] = 1;
 			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
+			
 			printf("%lld %d is eating\n", get_actual_time(), philo->id + 1);
+			
 			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 			usleep(philo->link_to_base->time_to_eat * 10);
 			philo->sleep = true;
+			printf("%lld %d is sleeping\n", get_actual_time(), philo->id + 1);
 			usleep(philo->link_to_base->time_to_sleep * 10);
 		}	
 		else if (philo->sleep == true)
 		{
+			//pthread_mutex_lock(&philo->link_to_base->base_mutex);
 			philo->fork->status[philo->id] = 0;
 			philo->fork->status[philo->id + 1] = 0;
 			philo->sleep = false;
 			philo->think = true;
+			printf("%lld %d is thinking\n", get_actual_time(), philo->id + 1);
+			//philo->link_to_base->start_timer = get_actual_time();
+			usleep(100);
 			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 		}
 		else
 			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+		
+		pthread_mutex_lock(&philo->mutex);
+		if (get_actual_time() - philo->link_to_base->start_timer > philo->link_to_base->time_to_die)
+			philo->die = true;
+		pthread_mutex_unlock(&philo->mutex);
 		
 	}
 	return (NULL);
@@ -150,8 +163,8 @@ int	main(int argc, char **argv)
 		printf("Too many arguments. Exiting...\n");
 		return (1);
 	}
-	base.time_start = get_actual_time();
-	printf("Starting time:%lld\n", base.time_start);
+	base.start_timer = get_actual_time();
+	printf("Starting time:%lld\n", base.start_timer);
 
 	ft_input_args(&base, argv),
 	ft_create_philos(&base, &fork);
