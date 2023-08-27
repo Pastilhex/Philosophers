@@ -10,6 +10,7 @@ SRC = ./src/test.c\
 	./src/utils/ft_bzero.c\
 	./src/utils/ft_calloc.c\
 	./src/utils/ft_atoi.c\
+	./src/utils/time.c\
 	./src/main.c\
 
 # Create a list of object files by replacing .c extension with .o

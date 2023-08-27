@@ -3,26 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/25 13:01:09 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/27 17:14:08 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
-
-long long	actual_time(void)
-{
-	long long			time;
-	struct timeval		current_time;
-
-	time = 0;
-	if (gettimeofday(&current_time, NULL) == -1)
-		return (0);
-	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
-	return (time);
-}
 
 bool	forks_are_avaiable(t_philo *p, int	id)
 {
@@ -40,42 +28,46 @@ void	*routine(void *arg)
 	philo = (t_philo *)arg;
 	while (philo->die == 0)
 	{
-		pthread_mutex_lock(&philo->b_mutex->base_mutex);
-		if (forks_are_avaiable(philo, philo->id))
+		pthread_mutex_lock(&philo->link_to_base->base_mutex);
+		if (forks_are_avaiable(philo, philo->id) && (philo->sleep == false))
 		{
-
 			philo->fork->status[philo->id] = 1;
-			printf("Fork %d Status %d\n", philo->id, philo->fork->status[philo->id]);
-			philo->fork->status[philo->id] = 0;
-
+			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
 			philo->fork->status[philo->id + 1] = 1;
-			printf("Fork %d Status %d\n", philo->id + 1, philo->fork->status[philo->id + 1]);
-			philo->fork->status[philo->id + 1] = 0;
-
-			printf("Philo %d has taken a fork\n", philo->id + 1);
-			pthread_mutex_unlock(&philo->b_mutex->base_mutex);
-
-			break;
+			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
+			printf("%lld %d is eating\n", get_actual_time(), philo->id + 1);
+			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+			usleep(philo->link_to_base->time_to_eat * 10);
+			philo->sleep = true;
+			usleep(philo->link_to_base->time_to_sleep * 10);
 		}	
+		else if (philo->sleep == true)
+		{
+			philo->fork->status[philo->id] = 0;
+			philo->fork->status[philo->id + 1] = 0;
+			philo->sleep = false;
+			philo->think = true;
+			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+		}
 		else
-			pthread_mutex_unlock(&philo->b_mutex->base_mutex);
-
-		// • Any state change of a philosopher must be formatted as follows:
-		// 	◦ timestamp_in_ms X has taken a fork
-		// 	◦ timestamp_in_ms X is eating
-		// 	◦ timestamp_in_ms X is sleeping
-		// 	◦ timestamp_in_ms X is thinking
-		// 	◦ timestamp_in_ms X died
-		//	5 / 300 / 100 / 100
-		//	number_of_philosophers
-		//	time_to_die
-		//	time_to_eat
-		//	time_to_sleep
-		//	[number_of_times_each_philosopher_must_eat]
-			
+			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+		
 	}
 	return (NULL);
 }
+
+	// • Any state change of a philosopher must be formatted as follows:
+	// 	◦ timestamp_in_ms X has taken a fork
+	// 	◦ timestamp_in_ms X is eating
+	// 	◦ timestamp_in_ms X is sleeping
+	// 	◦ timestamp_in_ms X is thinking
+	// 	◦ timestamp_in_ms X died
+	//	5 / 300 / 100 / 100
+	//	number_of_philosophers
+	//	time_to_die
+	//	time_to_eat
+	//	time_to_sleep
+	//	[number_of_times_each_philosopher_must_eat]
 
 void	ft_create_philos(t_base *b, t_forks *f)
 {
@@ -87,21 +79,19 @@ void	ft_create_philos(t_base *b, t_forks *f)
 	while (i < b->number_of_philosophers)
 	{
 		b->philo_id[i].fork = f;
-		b->philo_id[i].b_mutex = b;
+		b->philo_id[i].link_to_base = b;
 		pthread_mutex_init(&b->philo_id[i].mutex, NULL);
 		b->philo_id[i].id = i;
-		b->philo_id[i].die = 0;
-		b->philo_id[i].eat = 0;
-		b->philo_id[i].sleep = 0;
-		b->philo_id[i].think = 0;
+		b->philo_id[i].die = false;
+		b->philo_id[i].eat = false;
+		b->philo_id[i].sleep = false;
+		b->philo_id[i].think = false;
 		i++;
 	}
 	i = 0;
 	f->status = (int *)ft_calloc(b->number_of_philosophers, sizeof(int));
 	while (i < b->number_of_philosophers)
-		f->status[i++] = 0;
-	
-	
+		f->status[i++] = 0;	
 }
 
 void	ft_input_args(t_base *b, char **argv)
@@ -131,7 +121,7 @@ void	ft_start_threads(t_base *base)
 	{
 		pthread_create(&(base->philo_id[i].philo_thread), NULL, routine, &(base->philo_id[i]));
 		printf("Created Philo %d\n", base->philo_id[i].id + 1);
-		usleep(1000);
+		//usleep(1000);
 		i++;
 	}
 }
@@ -160,7 +150,9 @@ int	main(int argc, char **argv)
 		printf("Too many arguments. Exiting...\n");
 		return (1);
 	}
-	//actual_time();
+	base.time_start = get_actual_time();
+	printf("Starting time:%lld\n", base.time_start);
+
 	ft_input_args(&base, argv),
 	ft_create_philos(&base, &fork);
 

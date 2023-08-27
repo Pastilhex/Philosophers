@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/24 13:47:35 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/27 16:54:22 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ typedef struct s_forks
 typedef struct s_philo
 {
 	int				id;
-	int				die;
-	int				eat;
-	int				sleep;
-	int				think;
-	struct s_base	*b_mutex;
+	bool			die;
+	bool			eat;
+	bool			sleep;
+	bool			think;
+	struct s_base	*link_to_base;
 	pthread_t		philo_thread;
 	pthread_mutex_t	mutex;
 	t_forks			*fork;
@@ -41,6 +41,7 @@ typedef struct s_philo
 typedef struct s_base
 {
 	int				number_of_philosophers;
+	long long		time_start;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
@@ -51,8 +52,9 @@ typedef struct s_base
 	t_philo			*philo_id;
 }	t_base;
 
-int		ft_atoi(const char *str);
-void	ft_bzero(void *s, size_t n);
-void	*ft_calloc(size_t nmemb, size_t size);
+int			ft_atoi(const char *str);
+void		ft_bzero(void *s, size_t n);
+void		*ft_calloc(size_t nmemb, size_t size);
+long long	get_actual_time(void);
 
 #endif
