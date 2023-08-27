@@ -3,6 +3,7 @@ NAME = philo
 GDB = -g
 PT = -pthread
 CC = gcc
+FLAGS = -Wall -Wextra -Werror -fsanitize=thread
 
 # List of source files
 SRC = ./src/test.c\
@@ -19,11 +20,11 @@ all: $(NAME)
 
 # Rule to build object files from source files
 %.o: %.c
-	$(CC) $(GDB) $(PT) -c $< -o $@
+	$(CC) $(GDB) $(FLAGS) $(PT) -c $< -o $@
 
 # Rule to build the executable
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) -o $(NAME) $(GDB) $(PT)
+	$(CC) $(OBJ) -o $(NAME) $(GDB) $(FLAGS) $(PT)
 
 # Clean rule
 clean:

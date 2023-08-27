@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/16 19:21:55 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/24 13:47:35 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,28 +17,25 @@
 # include "stdlib.h"
 # include "unistd.h"
 # include "pthread.h"
-
-typedef struct s_counters
-{
-	int	i;
-	int	j;
-	int	k;
-}	t_counters;
+# include <sys/time.h>
+# include <stdbool.h>
 
 typedef struct s_forks
 {
-	int	fork;
+	int				*status;
 }	t_forks;
 
 typedef struct s_philo
 {
-	pthread_t	philo_thread;
-	int			die;
-	int			eat;
-	int			sleep;
-	int			think;
-	t_forks		*fork;
+	int				id;
+	int				die;
+	int				eat;
+	int				sleep;
+	int				think;
+	struct s_base	*b_mutex;
+	pthread_t		philo_thread;
 	pthread_mutex_t	mutex;
+	t_forks			*fork;
 }	t_philo;
 
 typedef struct s_base
@@ -47,14 +44,12 @@ typedef struct s_base
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int				nbr_of_meals; //number_of_times_each_philosopher_must_eat;
+	int				nbr_of_meals;
 	int				even_odd;
 	int				dead_philo_detected;
-	t_forks			*fork;
+	pthread_mutex_t	base_mutex;
 	t_philo			*philo_id;
-	t_counters		*c;
 }	t_base;
-
 
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);
