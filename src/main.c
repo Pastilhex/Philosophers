@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/28 17:34:53 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/28 20:22:40 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,13 @@ bool	forks_are_avaiable(t_philo *p, int	id)
 void	print_forks(t_philo *philo)
 {
 	int	i;
+	int	j;
 	
 	i = 0;
-	while (philo->fork->status[i])
+	j = 1;
+	while (i < philo->link_to_base->number_of_philosophers)
 	{
-		printf("Fork %d with status %d\n", philo->id + 1, philo->fork->status[i]);
+		printf("Fork %d with status %d\n", j++, philo->fork->status[i]);
 		i++;
 	}
 }
@@ -39,10 +41,8 @@ void	*routine(void *arg)
 	long long 	get_time;
 
 	philo = (t_philo *)arg;
-	pthread_mutex_lock(&philo->mutex);
 	philo->last_meal = get_actual_time();
-	pthread_mutex_unlock(&philo->mutex);
-	print_forks(philo);
+//	print_forks(philo);
 	while (philo->die == false)
 	{
 	
@@ -54,14 +54,14 @@ void	*routine(void *arg)
 			
 			// Pega um garfo
 			philo->fork->status[philo->id] = 1;
-			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
-			
+			printf("%lld Philo %d has taken a fork\n", (get_actual_time() - philo->last_meal), philo->id + 1);
+
 			// Pega outro garfo
 			philo->fork->status[philo->id + 1] = 1;
-			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
-			
+			printf("%lld Philo %d has taken a fork\n", (get_actual_time() - philo->last_meal), philo->id + 1);
+			pthread_mutex_lock(&philo->mutex);
 			print_forks(philo);
-			
+			pthread_mutex_unlock(&philo->mutex);
 			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 			
 			
@@ -69,7 +69,7 @@ void	*routine(void *arg)
 			philo->eat = true;
 			philo->last_meal = get_actual_time();
 			
-			printf("%lld %d is eating\n", get_actual_time(), philo->id + 1);
+			printf("%lld Philo %d is eating\n", (get_actual_time() - philo->last_meal), philo->id + 1);
 			usleep(philo->link_to_base->time_to_eat * 1000);
 			
 			// Depois de comer comeca a dormir
@@ -137,7 +137,7 @@ void	ft_create_philos(t_base *b, t_forks *f)
 	while (i < b->number_of_philosophers)
 	{
 		f->status[i] = 0;
-		printf("Fork %d initialized with status %d \n", b->philo_id[i].id, f->status[i]);
+		//printf("Fork %d initialized with status %d \n", b->philo_id[i].id, f->status[i]);
 		i++;
 	}
 		
