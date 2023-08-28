@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/27 21:35:35 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/28 15:12:47 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,39 +31,50 @@ void	*routine(void *arg)
 		pthread_mutex_lock(&philo->link_to_base->base_mutex);
 		if (forks_are_avaiable(philo, philo->id) && (philo->sleep == false))
 		{
+			// Pega um garfo
 			philo->fork->status[philo->id] = 1;
 			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
 			
+			// Pega outro garfo
 			philo->fork->status[philo->id + 1] = 1;
 			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
 			
-			printf("%lld %d is eating\n", get_actual_time(), philo->id + 1);
-			
 			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-			usleep(philo->link_to_base->time_to_eat * 10);
+			
+			
+			// Comeca a comer
+			philo->eat = true;
+			printf("%lld %d is eating\n", get_actual_time(), philo->id + 1);
+			usleep(philo->link_to_base->time_to_eat * 1000);
+			
+			// Depois de comer comeca a dormir
+			pthread_mutex_lock(&philo->mutex);
+			philo->fork->status[philo->id] = 0;
+			philo->fork->status[philo->id + 1] = 0;
 			philo->sleep = true;
-			printf("%lld %d is sleeping\n", get_actual_time(), philo->id + 1);
-			usleep(philo->link_to_base->time_to_sleep * 10);
+			pthread_mutex_unlock(&philo->mutex);
+			
+			
+			// printf("%lld %d is sleeping\n", get_actual_time(), philo->id + 1);
+			// usleep(philo->link_to_base->time_to_sleep * 1000);
 		}	
 		else if (philo->sleep == true)
 		{
-			//pthread_mutex_lock(&philo->link_to_base->base_mutex);
-			philo->fork->status[philo->id] = 0;
-			philo->fork->status[philo->id + 1] = 0;
+			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+			
 			philo->sleep = false;
 			philo->think = true;
 			printf("%lld %d is thinking\n", get_actual_time(), philo->id + 1);
-			//philo->link_to_base->start_timer = get_actual_time();
-			usleep(100);
-			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 		}
 		else
 			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-		
-		pthread_mutex_lock(&philo->mutex);
-		if (get_actual_time() - philo->link_to_base->start_timer > philo->link_to_base->time_to_die)
-			philo->die = true;
-		pthread_mutex_unlock(&philo->mutex);
+
+		usleep(100);
+	
+		// pthread_mutex_lock(&philo->mutex);
+		// if (get_actual_time() - philo->link_to_base->start_timer > philo->link_to_base->time_to_die)
+		// 	philo->die = true;
+		// pthread_mutex_unlock(&philo->mutex);
 		
 	}
 	return (NULL);
@@ -133,8 +144,6 @@ void	ft_start_threads(t_base *base)
 	while (i < base->number_of_philosophers)
 	{
 		pthread_create(&(base->philo_id[i].philo_thread), NULL, routine, &(base->philo_id[i]));
-		printf("Created Philo %d\n", base->philo_id[i].id + 1);
-		//usleep(1000);
 		i++;
 	}
 }
