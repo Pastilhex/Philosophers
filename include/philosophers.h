@@ -6,7 +6,7 @@
 /*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/27 21:21:25 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/28 16:13:57 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_philo
 {
 	int				id;
 	bool			die;
+	long long		last_meal;
 	bool			eat;
 	bool			sleep;
 	bool			think;
@@ -41,7 +42,6 @@ typedef struct s_philo
 typedef struct s_base
 {
 	int				number_of_philosophers;
-	long long		start_timer;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
