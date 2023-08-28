@@ -6,7 +6,7 @@
 /*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/28 16:14:32 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/28 17:34:53 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,17 @@ bool	forks_are_avaiable(t_philo *p, int	id)
 		return (true);
 	return (false);
 }
+void	print_forks(t_philo *philo)
+{
+	int	i;
+	
+	i = 0;
+	while (philo->fork->status[i])
+	{
+		printf("Fork %d with status %d\n", philo->id + 1, philo->fork->status[i]);
+		i++;
+	}
+}
 
 void	*routine(void *arg)
 {
@@ -31,8 +42,10 @@ void	*routine(void *arg)
 	pthread_mutex_lock(&philo->mutex);
 	philo->last_meal = get_actual_time();
 	pthread_mutex_unlock(&philo->mutex);
+	print_forks(philo);
 	while (philo->die == false)
 	{
+	
 		pthread_mutex_lock(&philo->link_to_base->base_mutex);
 		if (forks_are_avaiable(philo, philo->id) && (philo->sleep == false))
 		{
@@ -46,6 +59,8 @@ void	*routine(void *arg)
 			// Pega outro garfo
 			philo->fork->status[philo->id + 1] = 1;
 			printf("%lld %d has taken a fork\n", get_actual_time(), philo->id + 1);
+			
+			print_forks(philo);
 			
 			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 			
@@ -87,10 +102,6 @@ void	*routine(void *arg)
 		
 		get_time = get_actual_time();
 		time_to_die = get_time - philo->last_meal;
-		// printf("get time %lld\n", get_time);
-		// printf("last meal %lld\n", philo->last_meal);
-		// printf("time to die %lld\n", time_to_die);
-
 		if (time_to_die > philo->link_to_base->time_to_die)
 		{
 			printf("Philo %d Time to die: %lld\n", philo->id, time_to_die);
@@ -124,7 +135,12 @@ void	ft_create_philos(t_base *b, t_forks *f)
 	i = 0;
 	f->status = (int *)ft_calloc(b->number_of_philosophers, sizeof(int));
 	while (i < b->number_of_philosophers)
-		f->status[i++] = 0;	
+	{
+		f->status[i] = 0;
+		printf("Fork %d initialized with status %d \n", b->philo_id[i].id, f->status[i]);
+		i++;
+	}
+		
 }
 
 void	ft_input_args(t_base *b, char **argv)
