@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/29 19:46:33 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/29 20:12:30 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,26 @@ void	own_fork(t_philo *philo, int stat)
 		philo->fork->status[philo->id] = to;
 }
 
-bool	next_fork(t_philo *philo)
+void	next_fork(t_philo *philo, int stat)
 {
-	if (philo->id >= 0 && philo->id < philo->link_to_base->nbr_of_philos)
-		return (true);
-	if (philo->id == philo->link_to_base->nbr_of_philos - 1)
-		return (true);
-}
+	int	from;
+	int	to;
 
+	if (stat == 1)
+	{
+		from = 0;
+		to = 1;
+	}
+	else if (stat == 0)
+	{
+		from = 1;
+		to = 0;
+	}
+	if (philo->id >= 0 && philo->id < (philo->link_to_base->nbr_of_philos - 1) && philo->fork->status[philo->id + 1] == from)
+		philo->fork->status[philo->id + 1] = to;
+	else if (philo->id == philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[0] == from)
+		philo->fork->status[0] = to;
+}
 
 bool	two_forks_are_avaiable(t_philo *p, int	id)
 {
