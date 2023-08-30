@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/29 20:12:30 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/30 18:01:10 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,6 @@ bool	two_forks_are_avaiable(t_philo *p, int	id)
 		fork_two = 1;
 	if (fork_one && fork_two)
 	{
-		printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_to_base->time_start), p->id + 1);
-		printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_to_base->time_start), p->id + 1);
 		return (true);
 	}
 	return (false);
@@ -76,7 +74,17 @@ bool	two_forks_are_avaiable(t_philo *p, int	id)
 
 bool	one_fork_is_avaiable(t_philo *p, int id)
 {
+//	printf("One fork: %d\n", id + 1);
 	if (p->fork->status[id] == 0)
+		return (true);
+	return (false);
+}
+
+bool	other_fork_is_avaiable(t_philo *philo, int id)
+{
+//	printf("Other fork: %d\n", id + 1);
+	if ((id >= 0 && id < (philo->link_to_base->nbr_of_philos - 1) && philo->fork->status[id + 1] == 0)
+		|| (philo->id == philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[0] == 0))
 		return (true);
 	return (false);
 }
@@ -103,59 +111,56 @@ void	*routine(void *arg)
 
 	philo = (t_philo *)arg;
 	philo->last_meal = get_actual_time();
-	if (philo->id % 2 != 0)
+	if (philo->id % 2 == 0)
 	{
-		//printf("philo id:%d %% 2 = %d\n", philo->id, philo->id % 2);
-		usleep(100);
+		usleep(philo->link_to_base->time_to_die / 3);
 	}
 	while (philo->die == false)
 	{
-		// Pega no primeiro garfo
-		pthread_mutex_lock(&philo->link_to_base->base_mutex);
 		if (philo->think)
 		{
-			if (two_forks_are_avaiable(philo, philo->id))
+			pthread_mutex_lock(&philo->link_to_base->base_mutex);
+			if (one_fork_is_avaiable(philo, philo->id))
 			{
 				pick_own_fork(philo, 1);
-				pick_next_fork(philo, 1);				
-				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-				philo->eat = true;
-			}
-			else if (one_fork_is_avaiable(philo, philo->id))
-			{
-				pick_own_fork(philo, 1);
+				print_forks(philo);
 				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 			}
 			else
-			{
-				if ((philo->id >= 0 && philo->id < (philo->link_to_base->nbr_of_philos - 1) && philo->fork->status[philo->id + 1] == 0) || (philo->id == philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[0] == 0))
-					pick_next_fork(philo, 1);
 				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+
+			pthread_mutex_lock(&philo->link_to_base->base_mutex);
+			if (other_fork_is_avaiable(philo, philo->id))
+			{
+				pick_next_fork(philo, 1);
+				print_forks(philo);
+				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+				philo->think = false;
+				philo->eat = true;
 			}
+			else
+				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 		}
 
-		//pthread_mutex_lock(&philo->link_to_base->base_mutex);
-		//print_forks(philo);
-		//pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-		
-		// Começar a comer
-		pthread_mutex_lock(&philo->link_to_base->base_mutex);
 		if (philo->eat)
 		{
+			// pthread_mutex_lock(&philo->link_to_base->base_mutex);
+			// pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+
 			philo->last_meal = get_actual_time();
-			printf("%lld %d is eating\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
-			usleep(philo->link_to_base->time_to_eat * 1000);
 			philo->eat = false;
 			philo->sleep = true;
-			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-		}
-		else
-			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+			printf("%lld %d is eating\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
 
-		// Começa a dormir
-		pthread_mutex_lock(&philo->link_to_base->base_mutex);
+			// pthread_mutex_lock(&philo->mutex);
+			// pthread_mutex_unlock(&philo->mutex);
+
+			usleep(philo->link_to_base->time_to_eat * 1000);
+		}
+
 		if (philo->sleep)
 		{
+			pthread_mutex_lock(&philo->link_to_base->base_mutex);
 			philo->fork->status[philo->id] = 0;
 			if (philo->id + 1 == philo->link_to_base->nbr_of_philos && philo->fork->status[0] == 1)
 				philo->fork->status[0] = 0;
@@ -166,14 +171,13 @@ void	*routine(void *arg)
 			usleep(philo->link_to_base->time_to_sleep * 1000);
 			philo->sleep = false;
 			philo->think = true;
-		}
-		else
-			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-		
+		}		
 		
 		if (philo->think)
 		{
+			pthread_mutex_lock(&philo->mutex);
 			printf("%lld %d is thinking\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
+			pthread_mutex_unlock(&philo->mutex);
 			usleep(100);
 		}
 
