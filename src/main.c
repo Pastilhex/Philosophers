@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/30 18:01:10 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/30 20:54:38 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ void	pick_next_fork(t_philo *philo, int stat)
 		from = 1;
 		to = 0;
 	}
-	if (philo->id >= 0 && philo->id < (philo->link_to_base->nbr_of_philos - 1) && philo->fork->status[philo->id + 1] == from)
+	if (philo->id + 1 < philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[philo->id + 1] == from)
 		philo->fork->status[philo->id + 1] = to;
-	else if (philo->id == philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[0] == from)
+	else if (philo->id + 1 >= philo->link_to_base->nbr_of_philos && philo->fork->status[0] == from)
 		philo->fork->status[0] = to;
 	printf("%lld %d has taken a fork\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
 }
@@ -61,10 +61,24 @@ bool	two_forks_are_avaiable(t_philo *p, int	id)
 
 	fork_one = 0;
 	fork_two = 0;
+	// printf("Check if two forks avaiable\n");
+	// printf("id+1: %d, p->link->nbr_of_philos-1: %d\n", id+1, p->link_to_base->nbr_of_philos - 1);
+	//usleep(1000);
 	if (p->fork->status[id] == 0)
+	{
+		//printf("Philo %d can pick fork %d\n", id+1, p->fork->status[id]);
 		fork_one = 1;
-	if (((id + 1) >= 0 && (id + 1) < p->link_to_base->nbr_of_philos && p->fork->status[id + 1] == 0) || ((id + 1) == (p->link_to_base->nbr_of_philos - 1) && p->fork->status[0] == 0))
+	}
+	if (id + 1 < p->link_to_base->nbr_of_philos - 1 && p->fork->status[id + 1] == 0)
+	{
+		// printf("Philo %d can pick fork %d\n", id+1, p->fork->status[id+1]);
 		fork_two = 1;
+	}
+	if (id + 1 >= p->link_to_base->nbr_of_philos && p->fork->status[0] == 0)
+	{
+		// printf("Philo %d can pick fork %d\n", id+1, p->fork->status[0]);
+		fork_two = 1;
+	}
 	if (fork_one && fork_two)
 	{
 		return (true);
@@ -72,17 +86,15 @@ bool	two_forks_are_avaiable(t_philo *p, int	id)
 	return (false);
 }
 
-bool	one_fork_is_avaiable(t_philo *p, int id)
+bool	is_fork_one_avaiable(t_philo *p, int id)
 {
-//	printf("One fork: %d\n", id + 1);
 	if (p->fork->status[id] == 0)
 		return (true);
 	return (false);
 }
 
-bool	other_fork_is_avaiable(t_philo *philo, int id)
+bool	is_fork_two_avaiable(t_philo *philo, int id)
 {
-//	printf("Other fork: %d\n", id + 1);
 	if ((id >= 0 && id < (philo->link_to_base->nbr_of_philos - 1) && philo->fork->status[id + 1] == 0)
 		|| (philo->id == philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[0] == 0))
 		return (true);
@@ -99,7 +111,6 @@ void	print_forks(t_philo *philo)
 	j = 1;
 	while (i < philo->link_to_base->nbr_of_philos)
 	{
-		//if (philo->fork->status[i] == 1)
 		printf("Philo %d, Fork %d with status %d\n", philo->id+1, j++, philo->fork->status[i]);
 		i++;
 	}
@@ -112,52 +123,31 @@ void	*routine(void *arg)
 	philo = (t_philo *)arg;
 	philo->last_meal = get_actual_time();
 	if (philo->id % 2 == 0)
-	{
-		usleep(philo->link_to_base->time_to_die / 3);
-	}
+		usleep(philo->link_to_base->time_to_eat / 2);
 	while (philo->die == false)
 	{
-		if (philo->think)
+		pthread_mutex_lock(&philo->link_to_base->base_mutex);
+		if (two_forks_are_avaiable(philo, philo->id))
 		{
-			pthread_mutex_lock(&philo->link_to_base->base_mutex);
-			if (one_fork_is_avaiable(philo, philo->id))
-			{
-				pick_own_fork(philo, 1);
-				print_forks(philo);
-				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-			}
-			else
-				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-
-			pthread_mutex_lock(&philo->link_to_base->base_mutex);
-			if (other_fork_is_avaiable(philo, philo->id))
-			{
-				pick_next_fork(philo, 1);
-				print_forks(philo);
-				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-				philo->think = false;
-				philo->eat = true;
-			}
-			else
-				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+			philo->think = false;
+			pick_own_fork(philo, 1);
+			pick_next_fork(philo, 1);
+			//print_forks(philo);
+			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+			philo->eat = true;
+			printf("%lld %d is eating\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
 		}
-
+		else
+			pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+		
 		if (philo->eat)
 		{
-			// pthread_mutex_lock(&philo->link_to_base->base_mutex);
-			// pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-
 			philo->last_meal = get_actual_time();
+			usleep(philo->link_to_base->time_to_eat * 1000);
 			philo->eat = false;
 			philo->sleep = true;
-			printf("%lld %d is eating\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
-
-			// pthread_mutex_lock(&philo->mutex);
-			// pthread_mutex_unlock(&philo->mutex);
-
-			usleep(philo->link_to_base->time_to_eat * 1000);
 		}
-
+		
 		if (philo->sleep)
 		{
 			pthread_mutex_lock(&philo->link_to_base->base_mutex);
@@ -170,23 +160,21 @@ void	*routine(void *arg)
 			printf("%lld %d is sleeping\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
 			usleep(philo->link_to_base->time_to_sleep * 1000);
 			philo->sleep = false;
-			philo->think = true;
 		}		
 		
-		if (philo->think)
+		if (!philo->think)
 		{
-			pthread_mutex_lock(&philo->mutex);
 			printf("%lld %d is thinking\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
-			pthread_mutex_unlock(&philo->mutex);
-			usleep(100);
+			usleep(philo->link_to_base->time_to_eat / 2);
+			philo->think = true;
 		}
-
+		
 		pthread_mutex_lock(&philo->mutex);
 		if ((get_actual_time() - philo->last_meal) > philo->link_to_base->time_to_die)
 			philo->die = true;
 		pthread_mutex_unlock(&philo->mutex);
 	}
-	printf("%lld %d died. Last meal: %lld, Time to die: %d\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1, philo->last_meal, philo->link_to_base->time_to_die);
+	printf("%lld %d died Last meal: %lld, Time to die: %d\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1, philo->last_meal, philo->link_to_base->time_to_die);
 	return (NULL);
 }
 
