@@ -12,7 +12,7 @@
 
 #include "../include/philosophers.h"
 
-void	own_fork(t_philo *philo, int stat)
+void	pick_own_fork(t_philo *philo, int stat)
 {
 	int	from;
 	int	to;
@@ -29,9 +29,10 @@ void	own_fork(t_philo *philo, int stat)
 	}
 	if (philo->fork->status[philo->id] == from)
 		philo->fork->status[philo->id] = to;
+	printf("%lld %d has taken a fork\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
 }
 
-void	next_fork(t_philo *philo, int stat)
+void	pick_next_fork(t_philo *philo, int stat)
 {
 	int	from;
 	int	to;
@@ -50,60 +51,34 @@ void	next_fork(t_philo *philo, int stat)
 		philo->fork->status[philo->id + 1] = to;
 	else if (philo->id == philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[0] == from)
 		philo->fork->status[0] = to;
+	printf("%lld %d has taken a fork\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
 }
 
 bool	two_forks_are_avaiable(t_philo *p, int	id)
 {
-	int	i;
 	int	fork_one;
 	int	fork_two;
 
-	i = 0;
 	fork_one = 0;
 	fork_two = 0;
-	while (i < p->link_to_base->nbr_of_philos)
-	{
-		if (i == id && p->fork->status[i] == 0)
-			fork_one = 1;
-		if (i == id + 1 && p->fork->status[i] == 0)
-			fork_two = 1;
-		else if (i == p->link_to_base->nbr_of_philos && p->fork->status[0] == 0)
-			fork_two = 1;
-		i++;
-	}
+	if (p->fork->status[id] == 0)
+		fork_one = 1;
+	if (((id + 1) >= 0 && (id + 1) < p->link_to_base->nbr_of_philos && p->fork->status[id + 1] == 0) || ((id + 1) == (p->link_to_base->nbr_of_philos - 1) && p->fork->status[0] == 0))
+		fork_two = 1;
 	if (fork_one && fork_two)
+	{
+		printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_to_base->time_start), p->id + 1);
+		printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_to_base->time_start), p->id + 1);
 		return (true);
+	}
 	return (false);
 }
 
-void	pick_up_forks(t_philo *p)
-{
-	if (p->id + 1 > 0 && p->id + 1 < p->link_to_base->nbr_of_philos && p->fork->status[p->id + 1] == 0)
-	{
-		p->fork->status[p->id + 1] = 1;
-		p->think = false;
-		pthread_mutex_unlock(&p->link_to_base->base_mutex);
-		p->eat = true;
-	}
-	else if (p->id + 1 >= p->link_to_base->nbr_of_philos && p->fork->status[0] == 0)
-	{
-		p->fork->status[0] = 1;
-		pthread_mutex_unlock(&p->link_to_base->base_mutex);
-		p->eat = true;
-	}
-}
-
-// printf("%lld Philo %d has taken a fork\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
-void	get_forks(t_philo *p, int	id)
+bool	one_fork_is_avaiable(t_philo *p, int id)
 {
 	if (p->fork->status[id] == 0)
-		p->fork->status[id] = 1;
-	printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_to_base->time_start), id + 1);
-	if (p->fork->status[id + 1] == 0)
-			p->fork->status[id + 1] = 1;
-	else if (id >= p->link_to_base->nbr_of_philos && p->fork->status[0] == 0)
-		p->fork->status[0] = 1;
-	printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_to_base->time_start), id + 1);
+		return (true);
+	return (false);
 }
 
 void	print_forks(t_philo *philo)
@@ -140,16 +115,28 @@ void	*routine(void *arg)
 		if (philo->think)
 		{
 			if (two_forks_are_avaiable(philo, philo->id))
-				pick_up_forks(philo);
-			printf("%lld %d has taken a fork\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
-			
-			else
+			{
+				pick_own_fork(philo, 1);
+				pick_next_fork(philo, 1);				
 				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
-			printf("%lld %d has taken a fork\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
+				philo->eat = true;
+			}
+			else if (one_fork_is_avaiable(philo, philo->id))
+			{
+				pick_own_fork(philo, 1);
+				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+			}
+			else
+			{
+				if ((philo->id >= 0 && philo->id < (philo->link_to_base->nbr_of_philos - 1) && philo->fork->status[philo->id + 1] == 0) || (philo->id == philo->link_to_base->nbr_of_philos - 1 && philo->fork->status[0] == 0))
+					pick_next_fork(philo, 1);
+				pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+			}
 		}
-		pthread_mutex_lock(&philo->link_to_base->base_mutex);
+
+		//pthread_mutex_lock(&philo->link_to_base->base_mutex);
 		//print_forks(philo);
-		pthread_mutex_unlock(&philo->link_to_base->base_mutex);
+		//pthread_mutex_unlock(&philo->link_to_base->base_mutex);
 		
 		// Começar a comer
 		pthread_mutex_lock(&philo->link_to_base->base_mutex);
@@ -189,7 +176,6 @@ void	*routine(void *arg)
 			printf("%lld %d is thinking\n", (get_actual_time() - philo->link_to_base->time_start), philo->id + 1);
 			usleep(100);
 		}
-
 
 		pthread_mutex_lock(&philo->mutex);
 		if ((get_actual_time() - philo->last_meal) > philo->link_to_base->time_to_die)
