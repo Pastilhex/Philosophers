@@ -2,7 +2,7 @@
 NAME = philo
 GDB = -g
 PT = -pthread
-CC = gcc
+CC = cc
 FLAGS = -Wall -Wextra -Werror -fsanitize=thread
 
 # List of source files

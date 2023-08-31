@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/08/29 19:18:12 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/08/31 16:40:53 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 typedef struct s_forks
 {
 	int				*status;
+	pthread_mutex_t	*mutex;
 }	t_forks;
 
 typedef struct s_philo
@@ -35,7 +36,6 @@ typedef struct s_philo
 	bool			think;
 	struct s_base	*link_to_base;
 	pthread_t		philo_thread;
-	pthread_mutex_t	mutex;
 	t_forks			*fork;
 }	t_philo;
 
