@@ -6,12 +6,17 @@ CC = cc
 FLAGS = -Wall -Wextra -Werror -fsanitize=thread
 
 # List of source files
-SRC = ./src/test.c\
-	./src/utils/ft_bzero.c\
-	./src/utils/ft_calloc.c\
-	./src/utils/ft_atoi.c\
+SRC = ./src/routine.c\
+	./src/threads.c\
+	./src/ft_create_philos.c\
+	./src/forks.c\
 	./src/utils/time.c\
-	./src/main.c\
+	./src/utils/ft_atoi.c\
+	./src/utils/ft_calloc.c\
+	./src/utils/ft_bzero.c\
+	./src/ft_input_args.c\
+	./src/philo.c\
+	./src/check_dead_philos.c\
 
 # Create a list of object files by replacing .c extension with .o
 OBJ = $(SRC:.c=.o)

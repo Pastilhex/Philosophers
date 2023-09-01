@@ -1,5 +1,11 @@
-./src/test.c\
-./src/utils/ft_bzero.c\
-./src/utils/ft_calloc.c\
+./src/routine.c\
+./src/threads.c\
+./src/ft_create_philos.c\
+./src/forks.c\
+./src/utils/time.c\
 ./src/utils/ft_atoi.c\
-./src/main.c\
+./src/utils/ft_calloc.c\
+./src/utils/ft_bzero.c\
+./src/ft_input_args.c\
+./src/philo.c\
+./src/check_dead_philos.c\
