@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   forks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/01 05:45:53 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/03 21:25:36 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ bool	is_fork_one_avaiable(t_philo *philo, int id)
 {
 	pthread_mutex_lock(&philo->fork->mutex[id]);
 	if (philo->fork->status[id] == 0)
-	{	
+	{
 		pthread_mutex_unlock(&philo->fork->mutex[id]);
 		return (true);
 	}

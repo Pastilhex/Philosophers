@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/01 06:08:24 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/03 20:52:22 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ typedef struct s_base
 	int				time_to_sleep;
 	int				nbr_of_meals;
 	int				even_odd;
-	int				dead_philo_detected;
-	pthread_mutex_t	base_mutex;
+	bool			dead_philo_detected;
+	pthread_mutex_t	dead_philo_mutex;
 	t_philo			*philo_id;
 }	t_base;
 
@@ -65,11 +65,12 @@ bool		is_fork_two_avaiable(t_philo *p, int id);
 void		ft_create_philos(t_base *b, t_forks *f);
 void		ft_input_args(t_base *b, char **argv);
 void		check_forks(t_philo *p);
-void		check_eat(t_philo *p);
-void		check_sleep(t_philo *p);
-void		check_think(t_philo *p);
+bool		check_eat(t_philo *p);
+bool		check_sleep(t_philo *p);
+bool		check_think(t_philo *p);
 void		*routine(void *arg);
 void		ft_start_threads(t_base *base);
 void		ft_join_threads(t_base *base);
+bool		is_dead(t_philo *p);
 
 #endif

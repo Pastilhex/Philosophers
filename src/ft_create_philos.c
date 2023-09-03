@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_create_philos.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/01 05:47:16 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/03 21:25:57 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,5 @@ void	ft_create_philos(t_base *b, t_forks *f)
 		f->status[i] = 0;
 		pthread_mutex_init(&f->mutex[i], NULL);
 		i++;
-	}		
+	}
 }

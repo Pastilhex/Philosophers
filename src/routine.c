@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/01 06:10:08 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/03 21:51:09 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	check_forks(t_philo *p)
 	}
 }
 
-void	check_eat(t_philo *p)
+bool	check_eat(t_philo *p)
 {
 	if (p->eat)
 	{
@@ -33,23 +33,24 @@ void	check_eat(t_philo *p)
 		usleep(p->link_b->time_to_eat * 1000);
 		p->eat = false;
 		p->sleep = true;
-		if (!check_dead_philos(p->link_b))
-			return ;
 	}
+	if (is_dead(p))
+		return (true);
+	return (false);
 }
 
-void	check_sleep(t_philo *p)
+bool	check_sleep(t_philo *p)
 {
 	if (p->sleep)
 	{
 		pthread_mutex_lock(&p->fork->mutex[p->id]);
 		p->fork->status[p->id] = 0;
-		if (p->id == p->link_b->nbr_p - 1
-			&& p->fork->status[0] == 1)
-			p->fork->status[0] = 0;
 		pthread_mutex_unlock(&p->fork->mutex[p->id]);
-		pthread_mutex_lock(&p->fork->mutex[(p->id + 1)
-			% p->link_b->nbr_p]);
+		pthread_mutex_lock(&p->fork->mutex[0]);
+		if (p->id == p->link_b->nbr_p - 1 && p->fork->status[0] == 1)
+			p->fork->status[0] = 0;
+		pthread_mutex_unlock(&p->fork->mutex[0]);
+		pthread_mutex_lock(&p->fork->mutex[(p->id + 1) % p->link_b->nbr_p]);
 		if (p->id >= 0 && p->id < p->link_b->nbr_p - 1
 			&& p->fork->status[(p->id + 1) % p->link_b->nbr_p] == 1)
 			p->fork->status[(p->id + 1) % p->link_b->nbr_p] = 0;
@@ -59,12 +60,13 @@ void	check_sleep(t_philo *p)
 				- p->link_b->time_start), (p->id + 1));
 		usleep(p->link_b->time_to_sleep * 1000);
 		p->sleep = false;
-		if (!check_dead_philos(p->link_b))
-			return ;
-	}	
+	}
+	if (is_dead(p))
+		return (true);
+	return (false);
 }
 
-void	check_think(t_philo *p)
+bool	check_think(t_philo *p)
 {
 	if (!p->think)
 	{
@@ -72,9 +74,10 @@ void	check_think(t_philo *p)
 				- p->link_b->time_start), (p->id + 1));
 		usleep(p->link_b->time_to_eat / 2);
 		p->think = true;
-		if (!check_dead_philos(p->link_b))
-			return ;
 	}
+	if (is_dead(p))
+		return (true);
+	return (false);
 }
 
 void	*routine(void *arg)
@@ -86,14 +89,20 @@ void	*routine(void *arg)
 	while (!check_dead_philos(p->link_b))
 	{
 		check_forks(p);
+		if (check_dead_philos(p->link_b))
+			break ;
 		check_eat(p);
+		if (check_dead_philos(p->link_b))
+			break ;
 		check_sleep(p);
+		if (check_dead_philos(p->link_b))
+			break ;
 		check_think(p);
-		pthread_mutex_lock(&p->fork->mutex[p->id]);
-		if ((get_actual_time() - p->last_meal) > p->link_b->time_to_die)
-			p->die = true;
-		pthread_mutex_unlock(&p->fork->mutex[p->id]);
+		if (check_dead_philos(p->link_b))
+			break ;
 	}
-	printf("%lld %d died\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
+	if (p->die)
+		printf("%lld %d died\n", (get_actual_time()
+				- p->link_b->time_start), p->id + 1);
 	return (NULL);
 }
