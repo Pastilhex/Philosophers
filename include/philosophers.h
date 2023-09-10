@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/10 12:58:49 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/10 16:19:19 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,6 @@ void		ft_join_threads(t_base *base);
 bool		is_dead(t_philo *p);
 long long	last_meal_time(t_philo *p);
 bool	check_meals(t_base *b);
+bool	check_dead_meals(t_philo *p);
 
 #endif

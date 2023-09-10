@@ -3,14 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   check_dead_philos.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/10 15:03:37 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/10 16:18:13 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
+
+bool	check_dead_meals(t_philo *p)
+{
+	pthread_mutex_lock(&p->link_b->dead_philo_mutex);
+	if (is_dead(p) || check_meals(p->link_b))
+	{
+		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		return (true);
+	}
+	pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+	return (false);
+}
 
 bool	is_dead(t_philo *p)
 {
