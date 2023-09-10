@@ -6,29 +6,40 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/07 11:07:46 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/09 17:05:09 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
 
-static void	check_mutex_init(pthread_mutex_t *mutex)
+void	even(t_philo *p, int i)
 {
-	int	result;
-	result = pthread_mutex_init(mutex, NULL);
-	if (result > 0)
-		printf("Mutex init fail\n");
+	p->left = &p->link_b->forks[i];
+	p->right = &p->link_b->forks[(i + 1) % p->link_b->nbr_p];
 }
 
-void	ft_create_philos(t_base *b, t_forks *f)
+void	odd(t_philo *p, int i)
+{
+	p->left = &p->link_b->forks[(i + 1) % p->link_b->nbr_p];
+	p->right = &p->link_b->forks[i];
+}
+
+void	ft_create_philos(t_base *b)
 {
 	int	i;
 
 	i = 0;
-	b->philo_id = (t_philo *)ft_calloc(b->nbr_p, sizeof(t_philo));
+	b->forks = malloc(b->nbr_p * sizeof(pthread_mutex_t));
 	while (i < b->nbr_p)
 	{
-		b->philo_id[i].fork = f;
+		pthread_mutex_init(&b->forks[i], NULL);
+		i++;
+	}
+
+	i = 0;
+	b->philo_id = malloc(b->nbr_p * sizeof(t_philo));
+	while (i < b->nbr_p)
+	{
 		b->philo_id[i].link_b = b;
 		b->philo_id[i].id = i;
 		b->philo_id[i].die = false;
@@ -36,19 +47,15 @@ void	ft_create_philos(t_base *b, t_forks *f)
 		b->philo_id[i].sleep = false;
 		b->philo_id[i].think = true;
 		b->philo_id[i].last_meal = b->time_start;
+		b->philo_id[i].meals = 0;
+		if (i % 2 == 0)
+			even(&b->philo_id[i], i);
+		else
+			odd(&b->philo_id[i], i);
 		i++;
 	}
 
-	
-	i = 0;
-	f->status = (int *)ft_calloc(b->nbr_p, sizeof(int));
-	f->mutex = (pthread_mutex_t *)ft_calloc(b->nbr_p, sizeof(pthread_mutex_t));
-	while (i < b->nbr_p)
-	{
-		f->status[i] = 0;
-		//pthread_mutex_init(&f->mutex[i], NULL);
-		check_mutex_init(&f->mutex[i]);
-		i++;
-	}
 	pthread_mutex_init(&b->dead_philo_mutex, NULL);
+	pthread_mutex_init(&b->meals_mutex, NULL);
+
 }

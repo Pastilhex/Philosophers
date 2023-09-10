@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/07 09:52:48 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/10 15:03:37 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,29 @@
 
 bool	is_dead(t_philo *p)
 {
-	pthread_mutex_lock(&p->fork->mutex[p->id]);
-	if ((get_actual_time() - p->last_meal) > p->link_b->time_to_die)
+	long long	time;
+
+	time = last_meal_time(p);
+	if (time > p->link_b->time_to_die)
 	{
-		p->link_b->dead_philo_detected = true;
-		pthread_mutex_unlock(&p->fork->mutex[p->id]);
+		p->die = true;
 		return (true);
 	}
-	pthread_mutex_unlock(&p->fork->mutex[p->id]);
 	return (false);
 }
 
 bool	check_dead_philos(t_base *base)
 {
-	pthread_mutex_lock(&base->dead_philo_mutex);
-	if (base->dead_philo_detected)
+	int	i;
+
+	i = 0;
+	while (i < base->nbr_p)
 	{
-		pthread_mutex_unlock(&base->dead_philo_mutex);
-		return (true);
+		if (base->philo_id[i].die == true)
+		{
+			return (true);
+		}
+		i++;
 	}
-	pthread_mutex_unlock(&base->dead_philo_mutex);
 	return (false);
 }

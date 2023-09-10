@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/07 11:00:34 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/09 17:07:18 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	main(int argc, char **argv)
 {
 	t_base			base;
-	t_forks			fork;
 
 	if (argc > 6)
 	{
@@ -23,7 +22,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	ft_input_args(&base, argv),
-	ft_create_philos(&base, &fork);
+	ft_create_philos(&base);
 	ft_start_threads(&base);
 	ft_join_threads(&base);
 }
