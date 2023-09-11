@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/11 06:02:37 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/11 21:00:06 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@ int	main(int argc, char **argv)
 	ft_input_args(&base, argv),
 	ft_create_philos(&base);
 	ft_start_threads(&base);
-	ft_join_threads(&base);
-	ft_destroy_philos(&base);
+	//ft_destroy_philos(&base);
 }
 
 	// • Any state change of a philosopher must be formatted as follows:

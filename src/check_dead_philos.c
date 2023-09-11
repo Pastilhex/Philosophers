@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_dead_philos.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/11 16:52:21 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/11 21:11:17 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,10 @@ bool	check_meals(t_base *b)
 bool	is_dead(t_philo *p, int id)
 {
 	pthread_mutex_lock(&p->link_b->meals_mutex);
+	// printf("Time: %lld\n", get_actual_time() - p->link_b->philo_id[id].last_meal);
 	if ((get_actual_time() - p->link_b->philo_id[id].last_meal) >= p->link_b->time_to_die)
 	{
+		//printf("%lld %d died\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
 		p->die = true;
 		pthread_mutex_unlock(&p->link_b->meals_mutex);
 		return (true);
@@ -51,17 +53,20 @@ bool	check_dead_philos(t_base *base)
 	int	i;
 
 	i = 0;
-	while (i < base->nbr_philos)
+	while (base->dead_philo_detected != true)
 	{
-		pthread_mutex_lock(&base->meals_mutex);
-		if (is_dead(base->philo_id, base->philo_id[i].id))
+		while (i < base->nbr_philos)
 		{
-			base->philo_id[i].die = true;
+			if (is_dead(base->philo_id, base->philo_id[i % base->nbr_philos].id))
+			{
+				pthread_mutex_lock(&base->dead_philo_mutex);
+				base->dead_philo_detected = true;
+				pthread_mutex_unlock(&base->dead_philo_mutex);
+				return (true);
+			}
+			i++;
 		}
-		printf("Time: %lld\n", get_actual_time());
-		pthread_mutex_unlock(&base->meals_mutex);
-		i++;
+		i = 0;
 	}
-	i = 0;
-	return (true);
+	return (false);
 }
