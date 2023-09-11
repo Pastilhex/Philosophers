@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   threads.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/08 13:49:04 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/11 05:43:18 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ void	ft_start_threads(t_base *base)
 
 	i = 0;
 	base->time_start = get_actual_time();
-	while (i < base->nbr_p)
+	pthread_create(&base->spy, NULL, spy_routine, &base);
+	while (i < base->nbr_philos)
 	{
 		pthread_create(&(base->philo_id[i].philo_thread), NULL, routine, &(base->philo_id[i]));
 		i++;
@@ -30,7 +31,8 @@ void	ft_join_threads(t_base *base)
 	int	i;
 
 	i = 0;
-	while (i < base->nbr_p)
+	pthread_join(base->spy, NULL);
+	while (i < base->nbr_philos)
 	{
 		pthread_join(base->philo_id[i].philo_thread, NULL);
 		i++;
