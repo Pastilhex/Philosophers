@@ -6,7 +6,7 @@
 /*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/12 06:59:39 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/12 15:47:26 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ bool	is_dead(t_base *b, int id)
 	if ((get_actual_time() - b->philo_id[id].last_meal > b->time_to_die))
 	{
 		b->philo_id[id].die = true;
-		printf("%lld %d morreu \n", (get_actual_time() - b->philo_id[id].last_meal), id+1);
+		printf("%lld %d died \n", (get_actual_time() - b->philo_id[id].last_meal), id+1);
 		pthread_mutex_unlock(&b->dead_philo_mutex);
 		return (true);
 	}
 	pthread_mutex_unlock(&b->dead_philo_mutex);
-	return (false);	
+	return (false);
 }
 
 void	check_dead_philos(t_base *base)
@@ -78,5 +78,4 @@ void	check_dead_philos(t_base *base)
 		pthread_mutex_lock(&base->dead_philo_mutex);
 	}
 	pthread_mutex_unlock(&base->dead_philo_mutex);
-	return ;
 }
