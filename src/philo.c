@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/11 21:00:06 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/12 19:42:43 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	main(int argc, char **argv)
 	ft_input_args(&base, argv),
 	ft_create_philos(&base);
 	ft_start_threads(&base);
-	//ft_destroy_philos(&base);
+	return (0);
 }
 
 	// • Any state change of a philosopher must be formatted as follows:
