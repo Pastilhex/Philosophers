@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/12 16:00:53 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/12 16:51:19 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,17 @@ void	*routine(void *arg)
 	while (check_for_dead_philos(p) != true)
 	{
 		pthread_mutex_lock(&p->link_b->dead_philo_mutex);
-		if (p->die == true || p->meals >= p->link_b->nbr_meals)
+		if (p->die == true || p->link_b->dead_philo_detected == true || check_meals(p->link_b) == true)
+		{
+			pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
 			break ;
+		}
 		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
 
 		if (pthread_mutex_lock(p->left) == 0)
 		{
-			if (p->link_b->nbr_philos > 1 && pthread_mutex_lock(p->right) == 0 && check_for_dead_philos(p) != true && p->meals < p->link_b->nbr_meals)
+
+			if (p->link_b->nbr_philos > 1 && pthread_mutex_lock(p->right) == 0 && check_for_dead_philos(p) != true)
 			{
 				printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
 				printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
