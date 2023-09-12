@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_dead_philos.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/11 21:11:17 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/12 06:59:39 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,40 +33,50 @@ bool	check_meals(t_base *b)
 	return (true);
 }
 
-bool	is_dead(t_philo *p, int id)
+bool	check_for_dead_philos(t_philo *p)
 {
-	pthread_mutex_lock(&p->link_b->meals_mutex);
-	// printf("Time: %lld\n", get_actual_time() - p->link_b->philo_id[id].last_meal);
-	if ((get_actual_time() - p->link_b->philo_id[id].last_meal) >= p->link_b->time_to_die)
+	pthread_mutex_lock(&p->link_b->dead_philo_mutex);
+	if (p->link_b->dead_philo_detected == true)
 	{
-		//printf("%lld %d died\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
-		p->die = true;
-		pthread_mutex_unlock(&p->link_b->meals_mutex);
+		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		return (true) ;
+	}
+	pthread_mutex_unlock(&p->link_b->dead_philo_mutex);	
+	return (false);
+}
+
+bool	is_dead(t_base *b, int id)
+{
+	pthread_mutex_lock(&b->dead_philo_mutex);
+	if ((get_actual_time() - b->philo_id[id].last_meal > b->time_to_die))
+	{
+		b->philo_id[id].die = true;
+		printf("%lld %d morreu \n", (get_actual_time() - b->philo_id[id].last_meal), id+1);
+		pthread_mutex_unlock(&b->dead_philo_mutex);
 		return (true);
 	}
-	pthread_mutex_unlock(&p->link_b->meals_mutex);
+	pthread_mutex_unlock(&b->dead_philo_mutex);
 	return (false);	
 }
 
-bool	check_dead_philos(t_base *base)
+void	check_dead_philos(t_base *base)
 {
 	int	i;
 
 	i = 0;
+	pthread_mutex_lock(&base->dead_philo_mutex);
 	while (base->dead_philo_detected != true)
 	{
+		pthread_mutex_unlock(&base->dead_philo_mutex);
 		while (i < base->nbr_philos)
 		{
-			if (is_dead(base->philo_id, base->philo_id[i % base->nbr_philos].id))
-			{
-				pthread_mutex_lock(&base->dead_philo_mutex);
+			if (is_dead(base, i) == true)
 				base->dead_philo_detected = true;
-				pthread_mutex_unlock(&base->dead_philo_mutex);
-				return (true);
-			}
 			i++;
 		}
 		i = 0;
+		pthread_mutex_lock(&base->dead_philo_mutex);
 	}
-	return (false);
+	pthread_mutex_unlock(&base->dead_philo_mutex);
+	return ;
 }
