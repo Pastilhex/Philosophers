@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/11 20:53:13 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/13 14:44:58 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	ft_create_philos(t_base *b)
 			odd(&b->philo_id[i], i);
 	}
 	b->dead_philo_detected = false;
+	b->nbr_meals_reached = false;
 	start_mutex(&b->dead_philo_mutex);
 	start_mutex(&b->meals_mutex);
 }
