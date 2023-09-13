@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/13 06:45:09 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/13 20:19:35 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ void		handle_meals(t_philo *p);
 void		handle_eat(t_philo *p);
 void		handle_sleep(t_philo *p);
 void		handle_think(t_philo *p);
-bool		check_deads_or_meals(t_philo *p);
-void		check_dead_philos(t_base *base);
+bool		deads_or_meals(t_philo *p);
+void		check_dead_philos(t_base *b);
 bool		check_for_dead_philos(t_philo *p);
 
 #endif
