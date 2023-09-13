@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_dead_philos.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/13 14:41:55 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/13 16:05:10 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,18 @@ bool	check_meals(t_base *b)
 bool	is_dead(t_base *b, int id)
 {
 	pthread_mutex_lock(&b->dead_philo_mutex);
+	pthread_mutex_lock(&b->meals_mutex);
 	if (b->philo_id[id].last_meal != 0 && get_actual_time() - b->philo_id[id].last_meal > b->time_to_die && b->dead_philo_detected != true)
 	{
 		b->philo_id[id].die = true;
 		//if (check_meals(b) != true)
 		printf("%lld %d died\n", (get_actual_time() - b->philo_id[id].last_meal), id+1);
+		
+		pthread_mutex_unlock(&b->meals_mutex);
 		pthread_mutex_unlock(&b->dead_philo_mutex);
 		return (true);
 	}
+	pthread_mutex_unlock(&b->meals_mutex);
 	pthread_mutex_unlock(&b->dead_philo_mutex);
 	return (false);
 }
