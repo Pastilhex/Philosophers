@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_dead_philos.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/12 20:43:08 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/13 06:37:13 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,16 @@ void	check_dead_philos(t_base *base)
 	}
 	pthread_mutex_unlock(&base->dead_philo_mutex);
 	
+}
+
+bool	check_deads_or_meals(t_philo *p)
+{
+	pthread_mutex_lock(&p->link_b->dead_philo_mutex);
+	if (p->die == true || p->link_b->dead_philo_detected == true || check_meals(p->link_b) == true)
+	{
+		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		return (true);
+	}
+	pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+	return (false);
 }
