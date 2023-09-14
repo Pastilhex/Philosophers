@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/13 14:44:58 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/14 21:31:15 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,16 @@ void	even(t_philo *p, int i)
 {
 	p->left = &p->link_b->forks[i];
 	p->right = &p->link_b->forks[(i + 1) % p->link_b->nbr_philos];
+	p->left_f = &p->link_b->forks_f[i];
+	p->right_f = &p->link_b->forks_f[(i + 1) % p->link_b->nbr_philos];
 }
 
 void	odd(t_philo *p, int i)
 {
 	p->left = &p->link_b->forks[(i + 1) % p->link_b->nbr_philos];
 	p->right = &p->link_b->forks[i];
+	p->left_f = &p->link_b->forks_f[(i + 1) % p->link_b->nbr_philos];
+	p->right_f = &p->link_b->forks_f[i];
 }
 
 void	ft_create_philos(t_base *b)
@@ -36,20 +40,18 @@ void	ft_create_philos(t_base *b)
 
 	i = 0;
 	b->forks = malloc(b->nbr_philos * sizeof(pthread_mutex_t));
+	b->forks_f = malloc(b->nbr_philos * sizeof(int));
 	while (i < b->nbr_philos)
+	{
+		b->forks_f[i] = 0;
 		start_mutex(&b->forks[i++]);
+	}
 	i = -1;
 	b->philo_id = malloc(b->nbr_philos * sizeof(t_philo));
 	while (++i < b->nbr_philos)
 	{
 		b->philo_id[i].link_b = b;
 		b->philo_id[i].id = i;
-		b->philo_id[i].die = false;
-		b->philo_id[i].eat = false;
-		b->philo_id[i].sleep = false;
-		b->philo_id[i].think = true;
-		b->philo_id[i].last_meal = b->time_start;
-		b->philo_id[i].meals = 0;
 		if (i % 2 == 0)
 			even(&b->philo_id[i], i);
 		else

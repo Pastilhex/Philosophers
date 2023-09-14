@@ -6,54 +6,63 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/13 20:45:03 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/14 21:24:27 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
 
-void	handle_meals(t_philo *p)
-{
-	pthread_mutex_lock(&p->link_b->meals_mutex);
-	p->meals++;
-	p->last_meal = get_actual_time();
-	pthread_mutex_unlock(&p->link_b->meals_mutex);
-}
-
 void	handle_eat(t_philo *p)
 {
-	if (pthread_mutex_lock(p->left) == 0)
+	if (p->link_b->nbr_philos > 1 && deads_or_meals(p) == false)
 	{
-		if (p->link_b->nbr_philos > 1 && deads_or_meals(p) != true && pthread_mutex_lock(p->right) == 0)
+		pthread_mutex_lock(p->left);
+		pthread_mutex_lock(p->right);
+		*p->left_f = 1;
+		*p->right_f = 1;
+		pthread_mutex_lock(&p->link_b->dead_philo_mutex);
+		if (p->link_b->dead_philo_detected == false)
 		{
 			printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
 			printf("%lld %d has taken a fork\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
-			handle_meals(p);
 			printf("%lld %d is eating\n", (get_actual_time() - p->link_b->time_start), p->id + 1);
-			usleep(p->link_b->time_to_eat * 1000);
-			pthread_mutex_unlock(p->right);
-			pthread_mutex_unlock(p->left);
 		}
-		// else
-			// pthread_mutex_unlock(p->right);
+		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		pthread_mutex_lock(&p->link_b->meals_mutex);
+		p->meals++;
+		p->last_meal = get_actual_time();
+		pthread_mutex_unlock(&p->link_b->meals_mutex);
+
+		usleep(p->link_b->time_to_eat * 1000);
+		*p->left_f = 0;
+		*p->right_f = 0;
+		pthread_mutex_unlock(p->right);
+		pthread_mutex_unlock(p->left);
 	}
-	// else
-		// pthread_mutex_unlock(p->left);
 }
 
 void	handle_sleep(t_philo *p)
 {
-	if (p->link_b->nbr_philos > 1)
+	if (p->link_b->nbr_philos > 1 && deads_or_meals(p) == false)
 	{
-		printf("%lld %d is sleeping\n", (get_actual_time() - p->link_b->time_start), (p->id + 1));
+		pthread_mutex_lock(&p->link_b->dead_philo_mutex);
+		if (p->link_b->dead_philo_detected == false)
+			printf("%lld %d is sleeping\n", (get_actual_time() - p->link_b->time_start), (p->id + 1));
+		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
 		usleep(p->link_b->time_to_sleep * 1000);
 	}
 }
 
 void	handle_think(t_philo *p)
 {
-	if (p->link_b->nbr_philos > 1)
-		printf("%lld %d is thinking\n", (get_actual_time() - p->link_b->time_start), (p->id + 1));
+	if (p->link_b->nbr_philos > 1 && deads_or_meals(p) == false)
+	{
+		pthread_mutex_lock(&p->link_b->dead_philo_mutex);
+		if (p->link_b->dead_philo_detected == false)
+			printf("%lld %d is thinking\n", (get_actual_time() - p->link_b->time_start), (p->id + 1));
+		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		usleep(p->link_b->time_to_die / 2);
+	}
 }
 
 void	*routine(void *arg)
@@ -64,22 +73,13 @@ void	*routine(void *arg)
 	pthread_mutex_lock(&p->link_b->meals_mutex);
 	p->last_meal = get_actual_time();
 	pthread_mutex_unlock(&p->link_b->meals_mutex);
-	if ((p->id + 1) % 2 == 0)
-		usleep(10);
-	while (deads_or_meals(p) != true)
+	// if ((p->id) % 2 != 0)
+	// 	usleep(p->link_b->time_to_eat / 2);
+	while (deads_or_meals(p) == false)
 	{
-		if (deads_or_meals(p) != true)
-			handle_eat(p);
-		else
-			return (NULL);
-		if (deads_or_meals(p) != true)
-			handle_sleep(p);
-		else
-			return (NULL);
-		if (deads_or_meals(p) != true)
-			handle_think(p);
-		else
-			return (NULL);
+		handle_eat(p);
+		handle_sleep(p);
+		handle_think(p);
 	}
 	return (NULL);
 }

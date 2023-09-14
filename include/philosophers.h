@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/13 20:19:35 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/14 21:30:49 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,14 @@
 typedef struct s_philo
 {
 	int				id;
-	bool			die;
 	long long		last_meal;
 	int				meals;
-	bool			eat;
-	bool			sleep;
-	bool			think;
-	pthread_t		philo_thread;
-	struct s_base	*link_b;
+	int				*left_f;
+	int				*right_f;
 	pthread_mutex_t	*left;
 	pthread_mutex_t	*right;
+	pthread_t		philo_thread;
+	struct s_base	*link_b;
 }	t_philo;
 
 typedef struct s_base
@@ -45,6 +43,7 @@ typedef struct s_base
 	int				nbr_meals;
 	bool			dead_philo_detected;
 	bool			nbr_meals_reached;
+	int				*forks_f;
 	pthread_t		spy;
 	pthread_mutex_t	dead_philo_mutex;
 	pthread_mutex_t	meals_mutex;
@@ -73,5 +72,6 @@ void		handle_think(t_philo *p);
 bool		deads_or_meals(t_philo *p);
 void		check_dead_philos(t_base *b);
 bool		check_for_dead_philos(t_philo *p);
+long long	what_time(long long current, long long last_meal);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/12 19:42:43 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/14 21:21:09 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,6 @@ int	main(int argc, char **argv)
 	ft_input_args(&base, argv),
 	ft_create_philos(&base);
 	ft_start_threads(&base);
+	ft_destroy_philos(&base);
 	return (0);
 }
-
-	// • Any state change of a philosopher must be formatted as follows:
-	// 	◦ timestamp_in_ms X has taken a fork
-	// 	◦ timestamp_in_ms X is eating
-	// 	◦ timestamp_in_ms X is sleeping
-	// 	◦ timestamp_in_ms X is thinking
-	// 	◦ timestamp_in_ms X died
-	//	5 / 300 / 100 / 100
-	//	nbr_philos
-	//	time_to_die
-	//	time_to_eat
-	//	time_to_sleep
-	//	[number_of_times_each_philosopher_must_eat]
