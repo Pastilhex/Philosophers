@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 17:28:08 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 20:49:33 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,15 +65,12 @@ void		odd(t_philo *p, int i);
 void		*routine(void *arg);
 void		start_threads(t_base *base);
 long long	last_meal_time(t_philo *p);
-bool		is_dead(t_base *b, int i);
 bool		check_meals(t_base *b);
-void		handle_meals(t_philo *p);
 void		handle_eat(t_philo *p);
 void		handle_sleep(t_philo *p);
 void		handle_think(t_philo *p);
 bool		deads_or_meals(t_philo *p);
 void		check_dead_philos(t_base *b);
-bool		check_for_dead_philos(t_philo *p);
 long long	what_time(long long current, long long last_meal);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 18:14:07 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 21:52:37 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	check_dead_philos(t_base *b)
 	int	i;
 
 	i = 0;
-	while (b->dead_philo_detected == false && b->nbr_meals_reached == 0)
+	while (b->dead_philo_detected == 0 && b->nbr_meals_reached == 0)
 	{
 		check_meals(b);
 		while (i < b->nbr_philos)

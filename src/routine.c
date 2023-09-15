@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 19:02:43 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 22:09:52 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	handle_think(t_philo *p)
 			printf("%lld %d is thinking\n", \
 				(get_actual_time() - p->link_b->time_start), (p->id + 1));
 		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
-		usleep(p->link_b->time_to_die / 2);
+		usleep(500);
 	}
 }
 
@@ -83,7 +83,7 @@ void	*routine(void *arg)
 	p->last_meal = get_actual_time();
 	pthread_mutex_unlock(&p->link_b->meals_mutex);
 	if (p->id % 2 != 0)
-		usleep(p->link_b->time_to_eat / 2);
+		usleep(p->link_b->time_to_eat / 2 * 1000);
 	while (deads_or_meals(p) == false)
 	{
 		handle_eat(p);
