@@ -6,13 +6,13 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/14 21:29:31 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 18:17:31 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
 
-void	ft_start_threads(t_base *base)
+void	start_threads(t_base *base)
 {
 	int	i;
 
@@ -21,7 +21,8 @@ void	ft_start_threads(t_base *base)
 	while (i < base->nbr_philos)
 	{
 		base->philo_id[i].last_meal = base->time_start;
-		pthread_create(&(base->philo_id[i].philo_thread), NULL, routine, &(base->philo_id[i]));
+		pthread_create(&(base->philo_id[i].philo_thread), \
+			NULL, routine, &(base->philo_id[i]));
 		i++;
 		usleep(100);
 	}

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_create_philos.c                                 :+:      :+:    :+:   */
+/*   create_philos.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/14 21:31:15 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 18:25:06 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	odd(t_philo *p, int i)
 	p->right_f = &p->link_b->forks_f[i];
 }
 
-void	ft_create_philos(t_base *b)
+void	create_philos(t_base *b)
 {
 	int	i;
 
@@ -63,7 +63,7 @@ void	ft_create_philos(t_base *b)
 	start_mutex(&b->meals_mutex);
 }
 
-void	ft_destroy_philos(t_base *b)
+void	destroy_philos(t_base *b)
 {
 	int	i;
 
@@ -72,4 +72,7 @@ void	ft_destroy_philos(t_base *b)
 		pthread_mutex_destroy(&b->forks[i++]);
 	pthread_mutex_destroy(&b->dead_philo_mutex);
 	pthread_mutex_destroy(&b->meals_mutex);
+	free(b->forks);
+	free(b->forks_f);
+	free(b->philo_id);
 }

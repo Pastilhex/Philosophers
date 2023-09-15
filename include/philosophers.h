@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/14 21:30:49 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 17:28:08 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "pthread.h"
 # include <sys/time.h>
 # include <stdbool.h>
+# include <limits.h>
 
 typedef struct s_philo
 {
@@ -54,14 +55,15 @@ typedef struct s_base
 int			ft_atoi(const char *str);
 void		ft_bzero(void *s, size_t n);
 void		*ft_calloc(size_t nmemb, size_t size);
+bool		ft_is_numeric(char *str);
 long long	get_actual_time(void);
-void		ft_create_philos(t_base *b);
-void		ft_destroy_philos(t_base *b);
-void		ft_input_args(t_base *b, char **argv);
+void		create_philos(t_base *b);
+void		destroy_philos(t_base *b);
+void		input_args(t_base *b, char **argv);
 void		even(t_philo *p, int i);
 void		odd(t_philo *p, int i);
 void		*routine(void *arg);
-void		ft_start_threads(t_base *base);
+void		start_threads(t_base *base);
 long long	last_meal_time(t_philo *p);
 bool		is_dead(t_base *b, int i);
 bool		check_meals(t_base *b);
