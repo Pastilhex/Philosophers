@@ -3,7 +3,7 @@ NAME = philo
 GDB = -g
 PT = -pthread
 CC = cc
-FLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=leak #-fsanitize=thread
+FLAGS = -Wall -Wextra -Werror #-fsanitize=thread
 
 # List of source files
 SRC = ./src/create_philos.c\
