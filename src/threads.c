@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 18:17:31 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 18:58:22 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	start_threads(t_base *base)
 		pthread_create(&(base->philo_id[i].philo_thread), \
 			NULL, routine, &(base->philo_id[i]));
 		i++;
-		usleep(100);
 	}
 	check_dead_philos(base);
 	i = 0;

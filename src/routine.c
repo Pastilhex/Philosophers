@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 18:16:58 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/15 19:02:43 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ void	*routine(void *arg)
 	pthread_mutex_lock(&p->link_b->meals_mutex);
 	p->last_meal = get_actual_time();
 	pthread_mutex_unlock(&p->link_b->meals_mutex);
+	if (p->id % 2 != 0)
+		usleep(p->link_b->time_to_eat / 2);
 	while (deads_or_meals(p) == false)
 	{
 		handle_eat(p);
