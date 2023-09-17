@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_philos.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 19:36:47 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/17 06:04:57 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ void	create_philos(t_base *b)
 		b->philo_id[i].link_b = b;
 		b->philo_id[i].id = i;
 		if (i % 2 != 0)
-			even(&b->philo_id[i], i);
-		else
 			odd(&b->philo_id[i], i);
+		else
+			even(&b->philo_id[i], i);
 	}
 	b->dead_philo_detected = false;
 	b->nbr_meals_reached = false;

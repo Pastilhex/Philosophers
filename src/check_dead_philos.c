@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_dead_philos.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 21:52:37 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/17 08:04:14 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ void	check_dead_philos(t_base *b)
 				> b->time_to_die && b->dead_philo_detected == false)
 			{
 				printf("%lld %d died\n", (get_actual_time() \
-					- b->philo_id[i].last_meal), i + 1);
+				- b->philo_id[i].last_meal), i + 1);
 				b->dead_philo_detected = true;
 			}
-			pthread_mutex_unlock(&b->dead_philo_mutex);
 			pthread_mutex_unlock(&b->meals_mutex);
+			pthread_mutex_unlock(&b->dead_philo_mutex);
 			i++;
 		}
 		i = 0;

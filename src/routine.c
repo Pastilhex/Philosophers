@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/15 22:09:52 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/17 08:04:05 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	handle_eat(t_philo *p)
 
 void	handle_sleep(t_philo *p)
 {
-	if (p->link_b->nbr_philos > 1 && deads_or_meals(p) == false)
+	if (p->link_b->nbr_philos > 1)
 	{
 		pthread_mutex_lock(&p->link_b->dead_philo_mutex);
 		if (p->link_b->dead_philo_detected == false)
@@ -63,15 +63,21 @@ void	handle_sleep(t_philo *p)
 
 void	handle_think(t_philo *p)
 {
-	if (p->link_b->nbr_philos > 1 && deads_or_meals(p) == false)
+	if (p->link_b->nbr_philos > 1)
 	{
 		pthread_mutex_lock(&p->link_b->dead_philo_mutex);
 		if (p->link_b->dead_philo_detected == false)
-			printf("%lld %d is thinking\n", \
-				(get_actual_time() - p->link_b->time_start), (p->id + 1));
-		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
-		usleep(500);
+		{
+			printf("%lld %d is thinking\n", (get_actual_time() \
+				- p->link_b->time_start), (p->id + 1));
+			pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		}
+		else
+		{
+			pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		}
 	}
+	usleep(500);
 }
 
 void	*routine(void *arg)
