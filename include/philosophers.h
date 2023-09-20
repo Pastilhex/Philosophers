@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/17 06:02:00 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/20 14:06:03 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ typedef struct s_base
 	int				*forks_f;
 	pthread_t		spy;
 	pthread_mutex_t	dead_philo_mutex;
-	pthread_mutex_t	meals_mutex;
 	pthread_mutex_t	*forks;
 	t_philo			*philo_id;
 }	t_base;
@@ -66,11 +65,10 @@ void		*routine(void *arg);
 void		start_threads(t_base *base);
 long long	last_meal_time(t_philo *p);
 bool		check_meals(t_base *b);
-void		handle_eat(t_philo *p);
-void		handle_sleep(t_philo *p);
-void		handle_think(t_philo *p);
-bool		deads_or_meals(t_philo *p);
+bool		handle_eat(t_philo *p);
+bool		handle_sleep(t_philo *p);
+bool		handle_think(t_philo *p);
 void		check_dead_philos(t_base *b);
-long long	what_time(long long current, long long last_meal);
+void		join_threads(t_base *base);
 
 #endif

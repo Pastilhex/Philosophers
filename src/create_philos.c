@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_philos.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ialves-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/17 06:04:57 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/18 20:05:26 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	create_philos(t_base *b)
 	b->dead_philo_detected = false;
 	b->nbr_meals_reached = false;
 	start_mutex(&b->dead_philo_mutex);
-	start_mutex(&b->meals_mutex);
+	start_mutex(&b->dead_philo_mutex);
 }
 
 void	destroy_philos(t_base *b)
@@ -71,7 +71,7 @@ void	destroy_philos(t_base *b)
 	while (i < b->nbr_philos)
 		pthread_mutex_destroy(&b->forks[i++]);
 	pthread_mutex_destroy(&b->dead_philo_mutex);
-	pthread_mutex_destroy(&b->meals_mutex);
+	pthread_mutex_destroy(&b->dead_philo_mutex);
 	free(b->forks);
 	free(b->forks_f);
 	free(b->philo_id);
