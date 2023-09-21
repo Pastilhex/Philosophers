@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/18 20:05:26 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/21 23:29:01 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,9 @@ void	destroy_philos(t_base *b)
 
 	i = 0;
 	while (i < b->nbr_philos)
+	{
 		pthread_mutex_destroy(&b->forks[i++]);
-	pthread_mutex_destroy(&b->dead_philo_mutex);
+	}
 	pthread_mutex_destroy(&b->dead_philo_mutex);
 	free(b->forks);
 	free(b->forks_f);

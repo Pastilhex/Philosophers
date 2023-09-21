@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:40 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/20 14:06:03 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/21 23:58:00 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,6 @@ bool		handle_sleep(t_philo *p);
 bool		handle_think(t_philo *p);
 void		check_dead_philos(t_base *b);
 void		join_threads(t_base *base);
+bool		jump_off(t_philo *p);
 
 #endif

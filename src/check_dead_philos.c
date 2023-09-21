@@ -6,7 +6,7 @@
 /*   By: ialves-m <ialves-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 10:57:05 by ialves-m          #+#    #+#             */
-/*   Updated: 2023/09/20 14:08:03 by ialves-m         ###   ########.fr       */
+/*   Updated: 2023/09/22 00:07:25 by ialves-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,18 @@ void	join_threads(t_base *base)
 	i = 0;
 	while (i < base->nbr_philos)
 		pthread_join(base->philo_id[i++].philo_thread, NULL);
+}
+
+bool	jump_off(t_philo *p)
+{
+	usleep(400);
+	pthread_mutex_lock(&p->link_b->dead_philo_mutex);
+	if (p->link_b->dead_philo_detected == true
+		|| p->link_b->nbr_meals_reached == true)
+	{
+		pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+		return (true);
+	}
+	pthread_mutex_unlock(&p->link_b->dead_philo_mutex);
+	return (false);
 }
